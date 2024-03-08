@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, ParseUUIDPipe, Patch, Post} from '@nestjs/common';
 import { CarsService } from './cars.service';
+import { CreateCarDTO } from './dtos/create-car.dto';
+import { UpdateCarDTO } from './dtos/update-car.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -15,25 +17,22 @@ export class CarsController {
   }
 
   @Get(':id')
-  getCardByIs(@Param('id', ParseIntPipe ) id:number) {
+  getCardByIs(@Param('id', ParseUUIDPipe) id:string) {
     return this.carsService.findOneById(id);
   }
 
   @Post()
-  createCar( @Body() body: any ){
-    return body
+  createCar( @Body() createCarDTO: CreateCarDTO ){
+    return this.carsService.create(createCarDTO)
   }
 
   @Patch(':id')
-  updateCar( @Body() body: any ){
-    return body
+  updateCar(  @Param('id', ParseUUIDPipe) id:string, @Body() updateCarDto: UpdateCarDTO ){
+    return this.carsService.update(id, updateCarDto);
   }
 
   @Delete(":id")
-  deleteCar( @Param('id', ParseIntPipe) id: number  ){
-    return {
-      method: 'delete',
-      id
-    }
+  deleteCar( @Param('id', ParseUUIDPipe) id: string  ){
+    return this.carsService.delete(id)
   }
 }
